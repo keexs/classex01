@@ -27,4 +27,17 @@ const getKind = async (req, res, next) => {
   }
 };
 
-module.exports = { listKinds, getKind };
+const createKind = async (req, res, next) => {
+  const kind = req.body;
+  try {
+    const newKind = await Kind.create(kind);
+    res.status(201);
+    res.json(newKind);
+  } catch (error) {
+    error.message = "Bad request leand how to create a kind noob";
+    error.code = 400;
+    next(error);
+  }
+};
+
+module.exports = { listKinds, getKind, createKind };

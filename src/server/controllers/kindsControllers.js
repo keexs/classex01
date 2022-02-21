@@ -40,4 +40,44 @@ const createKind = async (req, res, next) => {
   }
 };
 
-module.exports = { listKinds, getKind, createKind };
+const updatekind = async (req, res, next) => {
+  const newKind = req.body;
+  const { id } = req.params;
+  try {
+    const updatedKind = await Kind.replaceOne({ _id: id }, newKind, {
+      runValidators: true,
+    });
+
+    if (updatedKind.modifiedCount === 0) {
+      const error = new Error("Update kind error");
+      error.code = 400;
+      next(error);
+      return;
+    }
+    res.json(newKind);
+  } catch (error) {
+    error.code = 400;
+    error.message = "Bad request at updating kind";
+    next(error);
+  }
+};
+
+const deleteKind = async (res, req, next) => {
+  const { id } = req.params;
+  try {
+    const deletedKind = await Kind.findByIdAndDelete(id);
+    if (deletedKind) {
+      res.json(deletedKind.id);
+      return;
+    }
+    const error = new Error("ID or kind not found");
+    error.code = 404;
+    next(error);
+  } catch (error) {
+    error.message = "Bad request triying to delete kind";
+    error.code = 400;
+    next(error);
+  }
+};
+
+module.exports = { listKinds, getKind, createKind, updatekind, deleteKind };

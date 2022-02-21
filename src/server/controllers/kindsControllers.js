@@ -19,9 +19,12 @@ const getKind = async (req, res, next) => {
     }
     const error = new Error("kind not found");
     error.code = 404;
+    next(error);
   } catch (error) {
+    error.message = "Bad id format or invalid id";
+    error.code = 400;
     next(error);
   }
 };
 
-module.exports = { listKinds };
+module.exports = { listKinds, getKind };
